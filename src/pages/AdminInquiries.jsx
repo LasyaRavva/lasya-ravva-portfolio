@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Check, CircleCheck, ClipboardList, Clock3, LogOut, Search, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Check, CircleCheck, ClipboardList, Clock3, LogOut, Search, ShieldCheck } from 'lucide-react'
 
 const checklistItems = [
   ['replied', 'Reply to the client'],
@@ -92,7 +92,7 @@ function SignIn({ onSignIn }) {
             <input id="admin-password" name="password" type="password" autoComplete="current-password" placeholder="Enter your password" required value={password} onChange={(event) => setPassword(event.target.value)} className="min-h-12 w-full cursor-text select-text rounded-lg border border-line bg-base px-4 text-base text-ink caret-accent-soft placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20" />
           </div>
           {error && <p role="alert" className="rounded-lg border border-rose-400/30 bg-rose-400/10 p-3 text-sm text-rose-200">{error}</p>}
-          <button type="submit" disabled={busy} className="btn btn-primary min-h-12 w-full disabled:opacity-60">{busy ? 'Signing in…' : 'Sign in'}</button>
+          <button type="submit" disabled={busy} className="btn btn-primary min-h-12 w-full disabled:opacity-60">{busy ? 'Signing in...' : 'Sign in'}</button>
         </form>
         <p className="mt-5 text-xs leading-relaxed text-muted">Dashboard accounts are created by the site owner. There is no public sign-up.</p>
       </section>
@@ -103,7 +103,7 @@ function SignIn({ onSignIn }) {
 function Metric({ label, value, Icon, tone = 'text-accent-soft' }) {
   return (
     <div className="rounded-xl border border-line bg-surface p-4 sm:p-5">
-      <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted">{label}</p><Icon aria-hidden className={`h-5 w-5 ${tone}`} /></div>
+      <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold sm:text-base" style={{ color: '#B7B7CB' }}>{label}</p><Icon aria-hidden className={`h-5 w-5 ${tone}`} /></div>
       <p className="mt-2 font-display text-3xl font-extrabold">{value}</p>
     </div>
   )
@@ -122,7 +122,7 @@ export default function AdminInquiries() {
   const loadInquiries = async (accessToken) => {
     const rows = await dashboardRequest(accessToken)
     setInquiries(rows)
-    setSelectedId((current) => (rows.some((row) => row.id === current) ? current : rows[0]?.id || ''))
+    setSelectedId((current) => (rows.some((row) => row.id === current) ? current : ''))
   }
 
   useEffect(() => {
@@ -230,15 +230,15 @@ export default function AdminInquiries() {
     )
   }
 
-  if (loading) return <main className="grid min-h-screen place-items-center bg-base text-muted" role="status">Loading private dashboard…</main>
+  if (loading) return <main className="grid min-h-screen place-items-center bg-base text-muted" role="status">Loading private dashboard...</main>
   if (!token) return <SignIn onSignIn={signIn} />
 
   return (
-    <main className="min-h-screen bg-base px-4 py-8 text-ink sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-7xl">
+    <main className="min-h-screen bg-base px-4 py-6 text-ink sm:px-8 sm:py-8 lg:px-10">
+      <div className="mx-auto max-w-[1760px]">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-6">
-          <div><p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-soft">Private workspace</p><h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">Inquiry dashboard</h1><p className="mt-2 text-sm text-muted">Review requests and track each project from first reply to delivery.</p></div>
-          <button type="button" onClick={signOut} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"><LogOut aria-hidden className="h-4 w-4" />Sign out</button>
+          <div><p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-soft">Private workspace</p><h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">Inquiry dashboard</h1><p className="mt-2 text-sm text-muted sm:text-base">Review requests and track each project from first reply to delivery.</p></div>
+          <button type="button" onClick={signOut} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-line px-4 text-sm font-semibold transition hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"><LogOut aria-hidden className="h-4 w-4" />Sign out</button>
         </header>
 
         <section className="mt-6 grid gap-3 sm:grid-cols-3 sm:gap-4" aria-label="Inquiry totals">
@@ -249,27 +249,28 @@ export default function AdminInquiries() {
 
         {error && <p role="alert" className="mt-5 rounded-lg border border-rose-400/30 bg-rose-400/10 p-3 text-sm text-rose-200">{error}</p>}
 
-        <section className="mt-6 grid min-w-0 gap-5 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.5fr)]">
-          <div className="min-w-0 rounded-2xl border border-line bg-surface p-4 sm:p-5">
+        <section className="mt-6 min-w-0">
+          {!selected && <div className="min-w-0 rounded-2xl border border-line bg-surface p-4 sm:p-5">
             <div className="flex flex-col gap-3">
-              <label className="relative block"><span className="sr-only">Search inquiries</span><Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, email, company…" className="min-h-11 w-full rounded-lg border border-line bg-base pl-10 pr-3 text-sm focus:border-accent focus:outline-none" /></label>
+              <label className="relative block"><span className="sr-only">Search inquiries</span><Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name, email, company..." className="min-h-11 w-full rounded-lg border border-line bg-base pl-10 pr-3 text-sm focus:border-accent focus:outline-none" /></label>
               <div className="flex gap-2" aria-label="Filter inquiries">
-                {['all', 'active', 'completed'].map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)} className={`min-h-9 rounded-full px-3 text-xs font-bold capitalize ${filter === item ? 'bg-accent-button text-white' : 'border border-line text-muted hover:text-ink'}`}>{item}</button>)}
+                {['all', 'active', 'completed'].map((item) => <button key={item} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)} className={`min-h-9 rounded-full px-4 text-xs font-bold capitalize ${filter === item ? 'bg-accent-button text-white' : 'border border-line text-muted hover:text-ink'}`}>{item}</button>)}
               </div>
             </div>
-            <div className="mt-4 max-h-[70vh] space-y-2 overflow-y-auto pr-1">
+            <div className="mt-4 grid max-h-[70vh] gap-2 overflow-y-auto pr-1 sm:grid-cols-2 xl:grid-cols-3">
               {visibleInquiries.map((item) => {
                 const done = Object.values(item.checklist || {}).filter(Boolean).length
-                return <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} aria-pressed={selectedId === item.id} className={`w-full rounded-xl border p-4 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${selectedId === item.id ? 'border-accent/50 bg-accent/10' : 'border-line bg-base/50 hover:bg-base'}`}>
+                return <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} className="w-full rounded-xl border border-line bg-base/50 p-3 text-left text-sm transition hover:border-accent/50 hover:bg-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent">
                   <span className="flex items-start justify-between gap-3"><span className="min-w-0"><span className="block truncate font-bold">{item.name}</span><span className="mt-1 block truncate text-xs text-muted">{item.service}</span></span><span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${item.status === 'completed' ? 'bg-emerald-400/10 text-emerald-300' : 'bg-accent/10 text-accent-soft'}`}>{item.status === 'in_progress' ? 'In progress' : item.status}</span></span>
-                  <span className="mt-3 flex items-center justify-between text-xs text-muted"><span>{formatDate(item.created_at || item.submitted_at)}</span><span>{done}/{checklistItems.length} complete</span></span>
+                  <span className="mt-2 flex items-center justify-between gap-2 text-xs text-muted"><span>{formatDate(item.created_at || item.submitted_at)}</span><span>{done}/{checklistItems.length} complete</span></span>
                 </button>
               })}
-              {!visibleInquiries.length && <p className="rounded-xl border border-dashed border-line p-5 text-sm leading-relaxed text-muted">{inquiries.length ? 'No inquiries match these filters.' : 'No inquiries yet. New submissions will appear here.'}</p>}
+              {!visibleInquiries.length && <p className="rounded-xl border border-dashed border-line p-5 text-sm leading-relaxed text-muted sm:col-span-2 xl:col-span-3">{inquiries.length ? 'No inquiries match these filters.' : 'No inquiries yet. New submissions will appear here.'}</p>}
             </div>
-          </div>
+          </div>}
 
-          {selected ? <article className="min-w-0 rounded-2xl border border-line bg-surface p-5 sm:p-7">
+          {selected && <article className="min-w-0 rounded-2xl border border-line bg-surface p-4 sm:p-6">
+            <button type="button" onClick={() => setSelectedId('')} className="mb-4 inline-flex min-h-9 items-center gap-2 rounded-lg border border-line px-3 text-xs font-semibold text-muted transition hover:bg-base hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"><ArrowLeft aria-hidden className="h-4 w-4" />All inquiries</button>
             <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-5"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-accent-soft">Project inquiry</p><h2 className="mt-2 font-display text-2xl font-extrabold">{selected.name}</h2><p className="mt-1 text-sm text-muted">Received {formatDate(selected.created_at || selected.submitted_at)}</p></div><span className="rounded-full border border-line px-3 py-1.5 text-xs font-bold capitalize text-muted">{selected.status === 'in_progress' ? 'In progress' : selected.status}</span></div>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {[
@@ -280,9 +281,9 @@ export default function AdminInquiries() {
             <section className="mt-6" aria-labelledby="inquiry-description-title"><h3 id="inquiry-description-title" className="text-xs font-bold uppercase tracking-wide text-muted">Project description</h3><p className="mt-2 whitespace-pre-wrap break-words rounded-xl border border-line bg-base/60 p-4 text-sm leading-relaxed">{selected.description}</p></section>
             <section className="mt-6" aria-labelledby="inquiry-progress-title"><div className="flex flex-wrap items-end justify-between gap-2"><div><h3 id="inquiry-progress-title" className="font-display text-lg font-bold">Progress checklist</h3><p className="mt-1 text-xs text-muted">Mark each step when it is done.</p></div><span className="text-sm font-bold text-accent-soft">{Object.values(selected.checklist || {}).filter(Boolean).length} of {checklistItems.length} complete</span></div>
               <div className="mt-3 divide-y divide-line rounded-xl border border-line bg-base/40 px-4">{checklistItems.map(([key, label]) => <label key={key} className="flex min-h-12 cursor-pointer items-center gap-3 py-3 text-sm"><input type="checkbox" checked={selected.checklist?.[key] === true} disabled={saving} onChange={(event) => toggleChecklist(key, event.target.checked)} className="h-4 w-4 accent-violet-500" /><span className={selected.checklist?.[key] ? 'text-muted line-through' : 'font-medium'}>{label}</span>{selected.checklist?.[key] && <Check aria-hidden className="ml-auto h-4 w-4 text-emerald-300" />}</label>)}</div>
-              {saving && <p className="mt-2 text-xs text-muted" role="status">Saving progress…</p>}
+              {saving && <p className="mt-2 text-xs text-muted" role="status">Saving progress...</p>}
             </section>
-          </article> : <div className="grid min-h-64 place-items-center rounded-2xl border border-dashed border-line p-6 text-center text-sm text-muted">Select an inquiry to see its details and checklist.</div>}
+          </article>}
         </section>
         <footer className="mt-8 border-t border-line pt-4 text-xs text-muted">Private inquiry records are available only to authorized dashboard accounts.</footer>
       </div>
