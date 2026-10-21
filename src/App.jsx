@@ -8,11 +8,13 @@ const Work = lazy(() => import('./pages/Work.jsx'))
 const ProjectDetails = lazy(() => import('./pages/ProjectDetails.jsx'))
 const About = lazy(() => import('./pages/About.jsx'))
 const Contact = lazy(() => import('./pages/Contact.jsx'))
+const AdminInquiries = lazy(() => import('./pages/AdminInquiries.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/admin/inquiries" element={<AdminInquiries />} />
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />

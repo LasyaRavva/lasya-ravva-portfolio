@@ -1,6 +1,8 @@
 # Contact form setup (EmailJS)
 
-The portfolio sends inquiries through EmailJS from the browser. This file contains the current variable contract and a paste-ready, business-style notification template. EmailJS stores the actual message layout in its dashboard, so edits here must also be pasted into the dashboard template.
+The portfolio sends inquiries through EmailJS from the browser. The current email template design stays as-is. The email contains a concise description preview; the complete inquiry is saved in the private dashboard.
+
+The form also saves the full inquiry to the authenticated private dashboard at `/admin/inquiries` through the Vercel API. See [`INQUIRY_DASHBOARD_SETUP.md`](INQUIRY_DASHBOARD_SETUP.md) to configure Supabase storage and admin access. The dashboard retains the complete project brief, including long descriptions.
 
 ## Premium project inquiry notification
 
@@ -65,10 +67,13 @@ In **EmailJS → Email Templates**, edit the template whose ID is `VITE_EMAILJS_
                </table>
 
                <h2 style="margin:28px 0 10px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#777487;">Client</h2>
-               <p style="margin:0 0 5px;font-size:18px;font-weight:bold;color:#252438;">{{name}}</p>
-               <p style="margin:4px 0;font-size:14px;overflow-wrap:anywhere;"><a href="mailto:{{email}}" style="color:#5740bd;text-decoration:underline;">{{email}}</a></p>
-               {{#has_company}}<p style="margin:4px 0;font-size:14px;color:#555465;">{{company}}</p>{{/has_company}}
-               {{#has_website}}<p style="margin:4px 0;font-size:14px;overflow-wrap:anywhere;"><a href="{{website}}" style="color:#5740bd;text-decoration:underline;">{{website}}</a></p>{{/has_website}}
+               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px solid #e9e8ef;border-radius:8px;border-collapse:separate;background:#fbfbfd;">
+                 <tr><td width="120" style="width:120px;padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:13px;color:#777487;">Name</td><td style="padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:14px;font-weight:bold;color:#252438;">{{name}}</td></tr>
+                 <tr><td width="120" style="width:120px;padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:13px;color:#777487;">Email</td><td style="padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:14px;overflow-wrap:anywhere;"><a href="mailto:{{email}}" style="color:#5740bd;text-decoration:underline;">{{email}}</a></td></tr>
+                 <tr><td width="120" style="width:120px;padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:13px;color:#777487;">Phone</td><td style="padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:14px;">{{#has_phone}}<a href="tel:{{phone}}" style="color:#5740bd;text-decoration:underline;">{{phone}}</a>{{/has_phone}}{{#has_no_phone}}Not provided{{/has_no_phone}}</td></tr>
+                 <tr><td width="120" style="width:120px;padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:13px;color:#777487;">Company</td><td style="padding:10px 12px;border-bottom:1px solid #e9e8ef;font-size:14px;color:#252438;">{{company}}</td></tr>
+                 <tr><td width="120" style="width:120px;padding:10px 12px;font-size:13px;color:#777487;">Website</td><td style="padding:10px 12px;font-size:14px;overflow-wrap:anywhere;">{{#has_website}}<a href="{{website}}" style="color:#5740bd;text-decoration:underline;">{{website}}</a>{{/has_website}}{{#has_no_website}}Not provided{{/has_no_website}}</td></tr>
+               </table>
 
                <h2 style="margin:28px 0 10px;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#777487;">Project brief</h2>
                <div style="padding:17px 18px;border-left:3px solid #7658ef;background:#f7f6fb;color:#333244;font-size:15px;line-height:1.7;white-space:pre-line;">{{description}}</div>
@@ -95,15 +100,16 @@ In **EmailJS → Email Templates**, edit the template whose ID is `VITE_EMAILJS_
    </table>
    ```
 
-EmailJS conditional sections use `{{#variable}}...{{/variable}}`; an empty or false value hides that section. Company and website remain optional, so the form sends empty strings plus `has_company` and `has_website` flags to hide those client details when not provided. Budget and timeline are now required and always appear in the project summary. This behavior is supported by [EmailJS dynamic variable templates](https://www.emailjs.com/docs/user-guide/dynamic-variables-templates/).
+EmailJS conditional sections use `{{#variable}}...{{/variable}}`; an empty or false value hides that section. The Client table always shows name, email, phone, company, and website. Phone and website use conditional sections to show clickable links when supplied and “Not provided” otherwise. Company is sent as the entered value or “Not provided”. Budget and timeline are required and always appear in the project summary. This behavior is supported by [EmailJS dynamic variable templates](https://www.emailjs.com/docs/user-guide/dynamic-variables-templates/).
 
 ## Template variables sent by the form
 
-Required values: `name`, `email`, `reply_to`, `service`, `description`, `budget`, `timeline`, and `submitted_at`.
+Required values: `name`, `email`, `reply_to`, `service`, `description`, `budget`, `timeline`, and `submitted_at`. `description` contains the full text when it is 280 characters or shorter; longer briefs are shortened to a concise preview. The full description remains available in the private inquiry dashboard.
 
-Optional values and visibility flags: `company` / `has_company` and `website` / `has_website`.
+Optional form inputs: `phone`, `company`, and `website`. The email parameters include `phone` and `website` fallback values of “Not provided”, with `has_phone`, `has_no_phone`, `has_website`, and `has_no_website` flags controlling the clickable link or fallback text. `company` is always sent as the entered value or “Not provided”, with `has_company: true` for compatibility with existing conditional templates.
 
 Footer links: `portfolio_url`, `linkedin`, and `github`. The portfolio URL uses the live site's current origin; social links come from `src/data/site.js`.
+
 
 ## Configure and check delivery
 
