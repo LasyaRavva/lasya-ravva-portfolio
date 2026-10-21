@@ -72,6 +72,9 @@ async function handleCreate(req, res, config) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inquiry.email)) {
     return reply(res, 400, { error: 'The email address is invalid.' })
   }
+  if (inquiry.phone && !/^[6-9]\d{9}$/.test(inquiry.phone)) {
+    return reply(res, 400, { error: 'The contact number must be a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.' })
+  }
   if (inquiry.website) {
     try {
       const website = new URL(inquiry.website)
